@@ -223,13 +223,27 @@ export default function Analysis() {
                   { label: "COULEURS", key: "color" },
                   { label: "FINITIONS", key: "finish" },
                   { label: "ICONOGRAPHIE", key: "iconography" }
-                ].map((item, i) => (
-                  <TerminalProgressBar 
-                    key={item.key}
-                    label={`${i + 1}. ${item.label}`} 
-                    progress={getFrameworkProgress(item.key)} 
-                  />
-                ))}
+                ].map((item, i) => {
+                  const frameworkResult = frameworkResults.find(r => r.frameworkType === item.key);
+                  const status = frameworkResult?.status || (analysis.status === "completed" ? "completed" : "pending");
+                  const progress = getFrameworkProgress(item.key);
+                  
+                  return (
+                    <div key={item.key} className="flex flex-col gap-1">
+                      <TerminalProgressBar 
+                        label={`${i + 1}. ${item.label}`} 
+                        progress={progress} 
+                      />
+                      <div className="flex justify-between text-[9px] px-1 uppercase tracking-tighter">
+                        <span className={status === "completed" ? "text-[#00FF41]" : status === "failed" ? "text-red-500" : "text-[#008F11]"}>
+                          STATUS: {status}
+                        </span>
+                        {status === "completed" && <span className="text-[#00FF41]">EXTRACTION COMPLETE</span>}
+                        {status === "failed" && <span className="text-red-500">CORRUPTION DETECTED</span>}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="flex-1 flex flex-col border-t border-[#003300] pt-4 overflow-hidden">
