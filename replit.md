@@ -7,7 +7,8 @@ An art analysis application that scans artworks across major museum databases (M
 - **Frontend**: React 18 with TypeScript, Vite, TailwindCSS
 - **Backend**: Express.js with TypeScript
 - **Database**: PostgreSQL with Drizzle ORM
-- **AI**: OpenAI API via Replit AI Integrations
+- **AI**: OpenAI API (Hybrid: Replit AI Integrations + External OpenAI API Key Support)
+- **Utilities**: JSZip for data extraction, p-retry for API stability
 
 ## Project Structure
 ```
@@ -40,12 +41,17 @@ An art analysis application that scans artworks across major museum databases (M
 - Database: `npm run db:push` - Push schema changes
 
 ## Environment Variables
-- `DATABASE_URL` - PostgreSQL connection string (auto-configured)
-- `AI_INTEGRATIONS_OPENAI_API_KEY` - OpenAI API key (auto-configured via Replit AI Integrations)
-- `AI_INTEGRATIONS_OPENAI_BASE_URL` - OpenAI base URL (auto-configured)
+- `DATABASE_URL` - PostgreSQL connection string
+- `OPENAI_API_KEY` - (Optional) External OpenAI key for enhanced stability
+- `AI_INTEGRATIONS_OPENAI_API_KEY` - Replit AI API key (auto-fallback)
+- `AI_INTEGRATIONS_OPENAI_BASE_URL` - Replit AI base URL
 
 ## Key Features
-- Artist DNA extraction and analysis
-- 6 analysis frameworks: artistic, composition, light, color, finish, iconography
-- Real-time progress tracking
-- Retro CRT terminal aesthetic
+- **Artist DNA Extraction**: 6 specialized frameworks (Artistic, Composition, Light, Color, Finish, Iconography).
+- **Batch Processing**: Military-grade stability with parallel processing and smart retries.
+- **Real-time Dashboard**: Granular [XX/30] progress tracking and live system logs.
+- **Secure Extraction**: Automated ZIP package generation containing:
+  - 6 synthesized DNA reports (.txt)
+  - Full artwork corpus imagery
+  - Analysis README manifest
+- **CRT Terminal Aesthetic**: Immersive Matrix-style UI with scanlines and flicker effects.
