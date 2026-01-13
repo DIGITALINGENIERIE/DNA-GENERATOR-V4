@@ -29,11 +29,23 @@ export default function Analysis() {
   const id = params ? parseInt(params.id) : undefined;
   const { data, isLoading, error } = useAnalysis(id);
   const logsEndRef = useRef<HTMLDivElement>(null);
+  const logsContainerRef = useRef<HTMLDivElement>(null);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
   
-  // Auto-scroll logs
+  // Handle manual scroll to disable/enable auto-scroll
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    // If user is within 50px of bottom, enable auto-scroll
+    const isAtBottom = scrollHeight - scrollTop - clientHeight < 50;
+    setShouldAutoScroll(isAtBottom);
+  };
+
+  // Auto-scroll logs only if shouldAutoScroll is true
   useEffect(() => {
-    logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [data?.analysis.logs]);
+    if (shouldAutoScroll) {
+      logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [data?.analysis.logs, shouldAutoScroll]);
 
   if (isLoading) {
     return (
@@ -228,7 +240,11 @@ export default function Analysis() {
                     <span>REC</span>
                   </div>
                 </div>
-                <div className="bg-black/50 border border-[#003300] p-4 flex-1 text-[11px] text-[#00FF41] overflow-y-auto font-mono scrollbar-thin">
+                <div 
+                  ref={logsContainerRef}
+                  onScroll={handleScroll}
+                  className="bg-black/50 border border-[#003300] p-4 flex-1 text-[11px] text-[#00FF41] overflow-y-auto font-mono custom-scrollbar"
+                >
                   {(analysis.logs || []).map((log, i) => (
                     <LogEntry key={i} text={log} />
                   ))}
