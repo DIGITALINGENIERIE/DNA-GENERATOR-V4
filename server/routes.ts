@@ -76,16 +76,35 @@ export async function registerRoutes(
     }
 
     const results = await storage.getFrameworkResultsByAnalysisId(id);
+    const artworks = await storage.getArtworksByAnalysisId(id);
     const zip = new JSZip();
     const folderName = `${analysis.artistName.replace(/\s+/g, '_')}_DNA_ANALYSIS_${new Date().toISOString().split('T')[0]}`;
     const folder = zip.folder(folderName);
 
+    // Add result files
     results.forEach(result => {
       const filename = getFilenameForFramework(result.frameworkType);
       if (folder && result.synthesisText) {
         folder.file(filename, result.synthesisText);
       }
     });
+
+    // Add artworks folder
+    const artworksFolder = folder?.folder("ARTWORKS_CORPUS");
+    if (artworksFolder) {
+      const axios = (await import("axios")).default;
+      for (let i = 0; i < artworks.length; i++) {
+        const art = artworks[i];
+        try {
+          const response = await axios.get(art.imageUrl, { responseType: 'arraybuffer' });
+          const extension = art.imageUrl.split('.').pop()?.split('?')[0] || 'jpg';
+          const filename = `${(i + 1).toString().padStart(2, '0')}_${art.title.replace(/[^a-z0-9]/gi, '_').substring(0, 50)}.${extension}`;
+          artworksFolder.file(filename, response.data);
+        } catch (error) {
+          console.error(`Failed to download image for artwork ${art.id}:`, error);
+        }
+      }
+    }
 
     if (folder) {
       folder.file("README.txt", generateReadme(analysis.artistName, results.length));
