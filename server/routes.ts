@@ -32,7 +32,10 @@ export async function registerRoutes(
   app.post(api.analyses.create.path, async (req, res) => {
     try {
       const input = api.analyses.create.input.parse(req.body);
-      const analysis = await storage.createAnalysis({ artistName: input.artistName });
+      const analysis = await storage.createAnalysis({ 
+        artistName: input.artistName,
+        artworkTitles: input.artworkTitles
+      });
       
       const artworkTitles = input.artworkTitles
         .split('\n')
