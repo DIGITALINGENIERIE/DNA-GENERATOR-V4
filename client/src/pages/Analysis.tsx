@@ -100,15 +100,15 @@ export default function Analysis() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-[#00FF41] font-mono p-8 overflow-hidden relative flex flex-col">
+    <div className="min-h-screen bg-black text-[#00FF41] font-mono p-4 md:p-8 relative flex flex-col">
       <div className="scanlines" />
       <div className="crt-flicker" />
       <MatrixRain />
 
       {/* Global Application Frame */}
-      <div className="flex-1 border-2 border-[#00FF41] bg-black/40 backdrop-blur-sm relative flex flex-col p-1">
+      <div className="flex-1 border-2 border-[#00FF41] bg-black/40 backdrop-blur-sm relative flex flex-col p-1 overflow-hidden">
         {/* Top Header Frame Bar */}
-        <div className="border border-[#00FF41] p-4 mb-4 flex justify-between items-center bg-[#001100]">
+        <div className="border border-[#00FF41] p-4 mb-4 flex flex-col md:flex-row justify-between items-center bg-[#001100] gap-4">
           <div className="flex items-center gap-6">
             <h1 className="text-3xl font-black tracking-[0.3em] text-glow">
               DNA.GENERATOR_V4
@@ -145,10 +145,10 @@ export default function Analysis() {
           </div>
         </div>
 
-        <div className="flex-1 grid md:grid-cols-2 gap-6 p-4 overflow-hidden">
+        <div className="flex-1 grid md:grid-cols-2 gap-6 p-4 min-h-0">
           {/* LEFT PANEL: DATA STREAM (Artworks) */}
-          <div className="border border-[#00FF41] bg-black/60 p-1 flex flex-col overflow-hidden">
-            <div className="bg-[#001100] border border-[#003300] p-6 flex-1 flex flex-col overflow-hidden">
+          <div className="border border-[#00FF41] bg-black/60 p-1 flex flex-col min-h-0">
+            <div className="bg-[#001100] border border-[#003300] p-6 flex-1 flex flex-col min-h-0">
               <div className="flex items-center gap-3 mb-6 border-b border-[#003300] pb-4">
                 <div className="w-2 h-2 rounded-full bg-[#00FF41] animate-pulse" />
                 <h2 className="text-sm font-bold tracking-[0.2em] text-glow uppercase">
@@ -156,7 +156,7 @@ export default function Analysis() {
                 </h2>
               </div>
               
-              <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-2">
+              <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-2 min-h-0">
                 <AnimatePresence>
                   {artworks.map((art, i) => (
                     <motion.div
@@ -206,8 +206,8 @@ export default function Analysis() {
           </div>
 
           {/* RIGHT PANEL: SYSTEM METRICS & LOGS */}
-          <div className="border border-[#00FF41] bg-black/60 p-1 flex flex-col overflow-hidden">
-            <div className="bg-[#001100] border border-[#003300] p-6 flex-1 flex flex-col overflow-hidden">
+          <div className="border border-[#00FF41] bg-black/60 p-1 flex flex-col min-h-0">
+            <div className="bg-[#001100] border border-[#003300] p-6 flex-1 flex flex-col min-h-0">
               <div className="flex items-center gap-3 mb-6 border-b border-[#003300] pb-4">
                 <div className="w-2 h-2 rounded-full bg-[#00FF41] animate-pulse" />
                 <h2 className="text-sm font-bold tracking-[0.2em] text-glow uppercase">
@@ -215,7 +215,7 @@ export default function Analysis() {
                 </h2>
               </div>
 
-              <div className="grid grid-cols-2 gap-6 mb-8">
+              <div className="grid grid-cols-2 gap-6 mb-8 overflow-y-auto max-h-[40%] custom-scrollbar pr-2">
                 {[
                   { label: "DNA ARTISTIQUE", key: "artistic" },
                   { label: "COMPOSITION", key: "composition" },
@@ -246,7 +246,7 @@ export default function Analysis() {
                 })}
               </div>
 
-              <div className="flex-1 flex flex-col border-t border-[#003300] pt-4 overflow-hidden">
+              <div className="flex-1 flex flex-col border-t border-[#003300] pt-4 min-h-0">
                 <div className="flex justify-between text-[10px] text-[#008F11] mb-2 uppercase font-bold tracking-widest">
                   <span>SYSTEM LOG // LIVE STREAM</span>
                   <div className="flex items-center gap-2">
@@ -257,7 +257,7 @@ export default function Analysis() {
                 <div 
                   ref={logsContainerRef}
                   onScroll={handleScroll}
-                  className="bg-black/50 border border-[#003300] p-4 flex-1 text-[11px] text-[#00FF41] overflow-y-auto font-mono custom-scrollbar"
+                  className="bg-black/50 border border-[#003300] p-4 flex-1 text-[11px] text-[#00FF41] overflow-y-auto font-mono custom-scrollbar min-h-0"
                 >
                   {(analysis.logs || []).map((log, i) => (
                     <LogEntry key={i} text={log} />
