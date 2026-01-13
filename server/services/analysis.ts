@@ -19,7 +19,7 @@ export async function performAnalysis(analysisId: number, artistName: string) {
     async (framework: any) => {
       try {
         const completion = await openai.chat.completions.create({
-          model: "gpt-5", // Optimized for latest model
+          model: "gpt-4o", // Using gpt-4o as a fallback for stability
           messages: [
             {
               role: "system",
@@ -38,7 +38,6 @@ export async function performAnalysis(analysisId: number, artistName: string) {
               content: `Analyze this corpus for ${artistName}:\n${context}`
             }
           ],
-          max_completion_tokens: 1500,
         });
 
         const synthesisText = completion.choices[0]?.message?.content || "ANALYSIS_ERROR: NO_DATA_RETURNED";
