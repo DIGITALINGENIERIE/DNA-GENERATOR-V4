@@ -4,6 +4,7 @@ import { useAnalysis } from "@/hooks/use-analysis";
 import { motion, AnimatePresence } from "framer-motion";
 import { TerminalProgressBar } from "@/components/TerminalProgressBar";
 import { TerminalButton } from "@/components/TerminalButton";
+import { MatrixRain } from "@/components/MatrixRain";
 import { api, buildUrl } from "@shared/routes";
 import { 
   Download, 
