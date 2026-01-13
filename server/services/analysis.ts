@@ -3,10 +3,13 @@ import { FRAMEWORK_TYPES } from "@shared/schema";
 import OpenAI from "openai";
 import { batchProcess } from "../replit_integrations/batch";
 
-// We use the integration's environment variables
+// Use external API key if available, otherwise fallback to Replit AI integration
+const apiKey = process.env.OPENAI_API_KEY || process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+const baseURL = process.env.OPENAI_API_KEY ? undefined : process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
+
 const openai = new OpenAI({
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+  apiKey,
+  baseURL,
 });
 
 export async function performAnalysis(analysisId: number, artistName: string) {
