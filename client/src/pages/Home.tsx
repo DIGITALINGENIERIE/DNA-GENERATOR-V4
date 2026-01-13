@@ -41,6 +41,18 @@ export default function Home() {
           </div>
           <div className="flex gap-8 text-[10px] font-bold">
             <div className="flex flex-col items-end">
+              <span className="text-[#008F11]">MET_API:</span>
+              <span className="text-[#00FF41]">ONLINE</span>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className="text-[#008F11]">AIC_API:</span>
+              <span className="text-[#00FF41]">ONLINE</span>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className="text-[#008F11]">CMA_API:</span>
+              <span className="text-[#00FF41]">ONLINE</span>
+            </div>
+            <div className="flex flex-col items-end">
               <span className="text-[#008F11]">SYS_STATUS:</span>
               <span className="animate-pulse">ONLINE</span>
             </div>
