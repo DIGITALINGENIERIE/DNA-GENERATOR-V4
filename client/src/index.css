@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=VT323&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --terminal-black: #0c0c0c;
+  --terminal-green: #00FF41;
+  --terminal-green-dim: rgba(0, 255, 65, 0.2);
+  --terminal-green-glow: rgba(0, 255, 65, 0.5);
+  --scanline-color: rgba(0, 0, 0, 0.5);
+  --crt-flicker: rgba(0, 255, 65, 0.02);
+}
+
+@layer base {
+  body {
+    @apply bg-black text-[#00FF41] font-mono antialiased overflow-hidden;
+    background-color: var(--terminal-black);
+    font-family: 'Fira Code', monospace;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #001100;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #003300;
+    border: 1px solid #00FF41;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #005500;
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 5px var(--terminal-green-glow);
+  }
+  
+  .border-glow {
+    box-shadow: 0 0 5px var(--terminal-green-dim), inset 0 0 5px var(--terminal-green-dim);
+  }
+
+  .scanlines {
+    background: linear-gradient(
+      to bottom,
+      rgba(255,255,255,0),
+      rgba(255,255,255,0) 50%,
+      rgba(0,0,0,0.2) 50%,
+      rgba(0,0,0,0.2)
+    );
+    background-size: 100% 4px;
+    animation: scanline 10s linear infinite;
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 50;
+    opacity: 0.6;
+  }
+
+  .crt-flicker {
+    animation: flicker 0.15s infinite;
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--crt-flicker);
+    z-index: 49;
+    opacity: 0.1;
+  }
+
+  .typing-cursor::after {
+    content: '█';
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+}
+
+@keyframes scanline {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
+
+@keyframes flicker {
+  0% { opacity: 0.1; }
+  50% { opacity: 0.15; }
+  100% { opacity: 0.1; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ASCII Border Helper */
+.ascii-border {
+  position: relative;
+  border: 1px solid #00FF41;
+}
+.ascii-border::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px;
+  width: 8px; height: 8px;
+  border-top: 2px solid #00FF41;
+  border-left: 2px solid #00FF41;
+}
+.ascii-border::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; right: -2px;
+  width: 8px; height: 8px;
+  border-bottom: 2px solid #00FF41;
+  border-right: 2px solid #00FF41;
+}

@@ -1,0 +1,552 @@
+# PROMPT POUR REPLIT AI - DNA GENERATOR V4
+## Application Web d'Analyse Artistique de Grade Militaire
+
+---
+
+## 🎯 OBJECTIF PRINCIPAL
+
+Créer une application web "DNA.GENERATOR_V4" avec une interface de type terminal militaire/cyberpunk qui permet d'extraire l'ADN artistique d'un artiste en analysant 30 de ses œuvres via 6 frameworks d'analyse distincts.
+
+---
+
+## 📋 FONCTIONNALITÉS REQUISES
+
+### 1. Interface Utilisateur (UI)
+
+**Style visuel :**
+- Design terminal/console noir et vert Matrix/militaire
+- Police monospace (style terminal)
+- Animations de chargement type "initialisation de mission"
+- Bordures vertes néon avec style ASCII art
+- Barres de progression pour chaque framework d'analyse
+- Fond noir (#000000) avec texte vert néon (#00FF41)
+
+**Structure de l'interface :**
+
+**PANNEAU GAUCHE - INPUT_PROTOCOL :**
+- Titre : "● INPUT_PROTOCOL"
+- Champ de saisie : "TARGET SUBJECT / ARTIST NAME"
+  - Placeholder : "ENTER ARTIST IDENTITY..."
+- Section "CORPUS DATA (30 ARTWORKS)" avec compteur "COUNT: 00/30"
+- Liste numérotée des 30 œuvres avec titre et année
+- Format strict : "Titre (Année)" - un titre par ligne
+- Note en bas : "► FORMAT: ONE ARTWORK TITLE PER LINE. YEAR OPTIONAL. STRICT ADHERENCE REQUIRED."
+- Bouton principal : "INITIATE SEQUENCE ▶" (centré, style militaire)
+
+**PANNEAU DROIT - SYSTEM_METRICS :**
+- Titre : "● SYSTEM_METRICS"
+- 6 barres de progression horizontales avec labels :
+  1. DNA ARTISTIQUE [00/30]
+  2. COMPOSITION [00/30]
+  3. LUMIÈRE [00/30]
+  4. COULEURS [00/30]
+  5. FINITIONS [00/30]
+  6. ICONOGRAPHIE [00/30]
+- Section "SYSTEM LOG" avec zone de texte scrollable
+  - Messages de progression en temps réel
+  - Style : "Waiting for mission initialization..."
+  - Messages d'état durant l'analyse
+
+**HEADER :**
+- Logo : "DNA.GENERATOR_V4" (grande police, vert néon)
+- Sous-titre : "MILITARY GRADE ART ANALYSIS PROTOCOL"
+- Indicateurs en haut à droite :
+  - SYS_STATUS: ONLINE
+  - SECURE_CONN: ENCRYPTED
+  - VER: 4.0.2
+
+**FOOTER :**
+- Texte centré : "RESTRICTED ACCESS // AUTHORIZED PERSONNEL ONLY // SESSION ID: [code]"
+
+---
+
+### 2. Logique de Récupération des Œuvres
+
+**Sources de données (APIs gratuites sans authentification) :**
+
+1. **Metropolitan Museum of Art API**
+   - Endpoint de recherche : `https://collectionapi.metmuseum.org/public/collection/v1/search?q={artist_name}`
+   - Endpoint de détails : `https://collectionapi.metmuseum.org/public/collection/v1/objects/{objectID}`
+   - Champ image HD : `primaryImageSmall` ou `primaryImage`
+
+2. **Art Institute of Chicago API**
+   - Endpoint de recherche : `https://api.artic.edu/api/v1/artworks/search?q={artist_name}&limit=30`
+   - Champ image : `image_id` → construire URL avec IIIF
+   - Format IIIF : `https://www.artic.edu/iiif/2/{image_id}/full/843,/0/default.jpg`
+
+3. **Cleveland Museum of Art API**
+   - Endpoint : `https://openaccess-api.clevelandart.org/api/artworks/?q={artist_name}&limit=30`
+   - Champ image : `images.web.url`
+
+**Stratégie de récupération :**
+- Tenter d'abord Met Museum API
+- Si insuffisant de résultats (<30), interroger Art Institute of Chicago
+- Si toujours insuffisant, interroger Cleveland Museum
+- Combiner les résultats jusqu'à atteindre 30 œuvres
+- Prioriser les œuvres avec images HD disponibles
+- Gérer les erreurs réseau avec messages explicites dans SYSTEM LOG
+
+**Validation des œuvres :**
+- Vérifier que l'image existe et est accessible
+- Filtrer les œuvres sans image HD
+- Vérifier que l'artiste correspond (matching du nom)
+
+---
+
+### 3. Les 6 Frameworks d'Analyse - Architecture du Système
+
+**IMPORTANT : FLUX DE TRAVAIL DE L'ANALYSE**
+
+Le système doit appliquer **chaque framework individuellement** aux 30 œuvres, puis **synthétiser** les résultats :
+
+**PROCESSUS EN 3 ÉTAPES :**
+
+1. **PHASE D'ANALYSE INDIVIDUELLE** (par framework)
+   - Appliquer le Framework X à l'œuvre 1 → extraire l'ADN 1
+   - Appliquer le Framework X à l'œuvre 2 → extraire l'ADN 2
+   - ... répéter pour les 30 œuvres
+   - Résultat : 30 analyses individuelles par framework
+
+2. **PHASE DE SYNTHÈSE** (par framework)
+   - Analyser les 30 ADN individuels du Framework X
+   - Identifier les **constantes** (ce qui revient dans 80%+ des œuvres)
+   - Identifier les **évolutions** (changements chronologiques)
+   - Identifier les **signatures uniques** (ce qui définit l'artiste)
+   - Générer **UN SEUL fichier** synthétisant l'ADN global pour ce framework
+
+3. **PHASE DE GÉNÉRATION**
+   - Créer 6 fichiers .txt (un par framework synthétisé)
+   - Compiler en ZIP
+   - Livrer le package complet
+
+**Exemple concret - Framework Couleurs :**
+```
+Œuvre 1 → Analyse IA → Palette: bleu/jaune, temp: froide, saturation: haute
+Œuvre 2 → Analyse IA → Palette: bleu/orange, temp: froide, saturation: haute
+Œuvre 3 → Analyse IA → Palette: bleu/vert, temp: froide, saturation: moyenne
+...
+Œuvre 30 → Analyse IA → Palette: bleu/jaune, temp: froide, saturation: haute
+
+SYNTHÈSE:
+- Couleur dominante: BLEU (présent dans 28/30 œuvres)
+- Température: FROIDE (constante absolue)
+- Saturation: HAUTE à MOYENNE
+- Couleurs complémentaires: jaune, orange (couleurs chaudes en contraste)
+→ Génère le fichier 04_ADN_COULEURS.txt avec cette synthèse
+```
+
+---
+
+#### **FRAMEWORK 1 : ADN ARTISTIQUE**
+**Fichier output :** `01_ADN_ARTISTIQUE.txt`
+
+**Ce que l'IA doit extraire de CHAQUE œuvre :**
+- Motifs visuels récurrents
+- Thèmes représentés
+- Style dominant
+- Éléments de signature visuelle
+
+**Ce que la SYNTHÈSE doit contenir :**
+```
+DNA.GENERATOR_V4 - ARTISTIC DNA EXTRACTION
+ARTIST: [Nom de l'artiste]
+CORPUS: 30 ARTWORKS ANALYZED
+DATE: [Date d'analyse]
+═══════════════════════════════════════════
+
+● SIGNATURE VISUELLE PRIMAIRE
+[Ce qui apparaît dans 80%+ des œuvres]
+
+● MOTIFS RÉCURRENTS
+[Top 5-7 motifs identifiés dans le corpus]
+
+● ÉVOLUTION STYLISTIQUE
+[Changements observés chronologiquement]
+
+● THÈMES OBSESSIONNELS
+[Sujets qui reviennent constamment]
+
+● SYNTHÈSE ADN
+[5-7 caractéristiques DÉFINITIVES de l'artiste]
+```
+
+#### **FRAMEWORK 2 : ADN COMPOSITION**
+**Fichier output :** `02_ADN_COMPOSITION.txt`
+
+**Ce que l'IA doit extraire de CHAQUE œuvre :**
+- Structure spatiale utilisée
+- Type d'équilibre
+- Traitement de la profondeur
+- Points focaux et lignes directrices
+
+**Ce que la SYNTHÈSE doit contenir :**
+```
+DNA.GENERATOR_V4 - COMPOSITIONAL DNA EXTRACTION
+ARTIST: [Nom]
+═══════════════════════════════════════════
+
+● STRUCTURE SPATIALE DOMINANTE
+[Le schéma compositionnel le plus fréquent]
+
+● ÉQUILIBRE ET TENSION
+[Approche caractéristique de l'organisation spatiale]
+
+● GESTION DE LA PROFONDEUR
+[Technique préférée pour créer l'espace]
+
+● LIGNES DIRECTRICES ET POINTS FOCAUX
+[Pattern de guidage du regard typique]
+
+● FORMULE COMPOSITIONNELLE
+[La "recette" compositionnelle de l'artiste]
+```
+
+#### **FRAMEWORK 3 : ADN LUMIÈRE**
+**Fichier output :** `03_ADN_LUMIERE.txt`
+
+**Ce que l'IA doit extraire de CHAQUE œuvre :**
+- Type de source lumineuse
+- Intensité du contraste
+- Fonction de la lumière
+- Traitement des ombres
+
+**Ce que la SYNTHÈSE doit contenir :**
+```
+DNA.GENERATOR_V4 - LIGHT DNA EXTRACTION
+ARTIST: [Nom]
+═══════════════════════════════════════════
+
+● SOURCES LUMINEUSES
+[Type dominant observé dans le corpus]
+
+● CONTRASTE ET MODULATION
+[Niveau typique d'intensité lumineuse]
+
+● FONCTION DRAMATIQUE
+[Comment la lumière sert l'émotion]
+
+● TRAITEMENT DES OMBRES
+[Technique caractéristique d'ombrage]
+
+● SIGNATURE LUMINEUSE
+[L'approche unique et identifiable]
+```
+
+#### **FRAMEWORK 4 : ADN COULEURS**
+**Fichier output :** `04_ADN_COULEURS.txt`
+
+**Ce que l'IA doit extraire de CHAQUE œuvre :**
+- Couleurs dominantes
+- Température chromatique
+- Niveau de saturation
+- Combinaisons utilisées
+
+**Ce que la SYNTHÈSE doit contenir :**
+```
+DNA.GENERATOR_V4 - COLOR DNA EXTRACTION
+ARTIST: [Nom]
+═══════════════════════════════════════════
+
+● PALETTE DOMINANTE
+[Top 3-5 couleurs récurrentes avec fréquence]
+
+● TEMPÉRATURE CHROMATIQUE
+[Tendance globale chaude/froide/mixte]
+
+● SATURATION ET INTENSITÉ
+[Niveau caractéristique observé]
+
+● HARMONIES RÉCURRENTES
+[Combinaisons chromatiques préférées]
+
+● SIGNATURE CHROMATIQUE
+[Ce qui rend la palette unique et identifiable]
+```
+
+#### **FRAMEWORK 5 : ADN FINITIONS**
+**Fichier output :** `05_ADN_FINITIONS.txt`
+
+**Ce que l'IA doit extraire de CHAQUE œuvre :**
+- Texture de surface visible
+- Type de gestuelle
+- Niveau de détail
+- Netteté des contours
+
+**Ce que la SYNTHÈSE doit contenir :**
+```
+DNA.GENERATOR_V4 - FINISHING DNA EXTRACTION
+ARTIST: [Nom]
+═══════════════════════════════════════════
+
+● TEXTURE DE SURFACE
+[Approche matérielle dominante]
+
+● GESTUELLE ET TOUCHE
+[Caractère typique des coups de pinceau]
+
+● NIVEAU DE DÉTAIL
+[Degré de finition préféré]
+
+● TRAITEMENT DES CONTOURS
+[Netteté caractéristique]
+
+● SIGNATURE TECHNIQUE
+[L'approche tactile qui définit l'artiste]
+```
+
+#### **FRAMEWORK 6 : ADN SUJET ET ICONOGRAPHIE**
+**Fichier output :** `06_ADN_ICONOGRAPHIE.txt`
+
+**Ce que l'IA doit extraire de CHAQUE œuvre :**
+- Type de sujet représenté
+- Symboles présents
+- Présence de narration
+- Objets et figures récurrents
+
+**Ce que la SYNTHÈSE doit contenir :**
+```
+DNA.GENERATOR_V4 - ICONOGRAPHIC DNA EXTRACTION
+ARTIST: [Nom]
+═══════════════════════════════════════════
+
+● SUJETS PRIVILÉGIÉS
+[Top 3 thématiques les plus fréquentes]
+
+● SYMBOLISME ET MOTIFS
+[Éléments iconographiques récurrents]
+
+● NARRATIVITÉ
+[Approche narrative caractéristique]
+
+● OBJETS ET FIGURES FÉTICHES
+[Éléments signatures présents dans 50%+ des œuvres]
+
+● RELATION AU RÉEL
+[Positionnement entre représentation et abstraction]
+```
+
+---
+
+### 4. Processus d'Analyse (IA/Vision)
+
+**Pour chaque framework, l'application doit :**
+
+1. **Charger les 30 images** des œuvres récupérées
+2. **Analyser visuellement** chaque image avec une IA de vision (suggestions : OpenAI Vision API, Claude Vision, ou Google Vision API)
+3. **Extraire les données** selon les critères du framework
+4. **Synthétiser les observations** en un rapport cohérent
+5. **Générer le fichier texte** formaté
+
+**Prompt type pour l'IA de vision (à adapter pour chaque framework) :**
+
+```
+Tu es un expert en histoire de l'art spécialisé dans l'analyse [FRAMEWORK].
+Analyse cette œuvre de [ARTISTE] selon ces critères :
+[CRITÈRES SPÉCIFIQUES AU FRAMEWORK]
+
+Fournis une analyse concise et technique de 3-4 phrases maximum.
+Focus sur les éléments observables et mesurables.
+```
+
+**Agrégation des analyses :**
+- Après avoir analysé les 30 œuvres, synthétiser les patterns communs
+- Identifier les constantes et les évolutions
+- Générer le rapport final pour le framework
+
+---
+
+### 5. Génération du ZIP Final
+
+**Contenu du fichier ZIP :**
+```
+[ARTIST_NAME]_DNA_ANALYSIS_[DATE].zip
+├── 01_ADN_ARTISTIQUE.txt
+├── 02_ADN_COMPOSITION.txt
+├── 03_ADN_LUMIERE.txt
+├── 04_ADN_COULEURS.txt
+├── 05_ADN_FINITIONS.txt
+├── 06_ADN_ICONOGRAPHIE.txt
+└── README.txt
+```
+
+**Fichier README.txt :**
+```
+DNA.GENERATOR_V4 - ANALYSIS PACKAGE
+═══════════════════════════════════════════
+
+ARTIST: [Nom]
+ANALYSIS DATE: [Date]
+CORPUS: 30 Artworks
+VERSION: 4.0.2
+
+CONTENTS:
+- 01_ADN_ARTISTIQUE.txt : Signature visuelle globale
+- 02_ADN_COMPOSITION.txt : Analyse compositionnelle
+- 03_ADN_LUMIERE.txt : Traitement de la lumière
+- 04_ADN_COULEURS.txt : Palette et chromatisme
+- 05_ADN_FINITIONS.txt : Technique et texture
+- 06_ADN_ICONOGRAPHIE.txt : Sujets et symbolisme
+
+PROTOCOL: MILITARY GRADE ART ANALYSIS
+CLASSIFICATION: RESTRICTED
+```
+
+**Téléchargement :**
+- Bouton de téléchargement apparaît une fois l'analyse complète
+- Nom du fichier : `[ARTIST_NAME]_DNA_ANALYSIS_[TIMESTAMP].zip`
+- Message de confirmation dans SYSTEM LOG
+
+---
+
+### 6. Gestion des États et Feedback
+
+**Messages SYSTEM LOG à afficher :**
+
+```
+[00:00] Waiting for mission initialization...
+[00:01] TARGET ACQUIRED: [Artist Name]
+[00:02] CORPUS VALIDATION: 30 artworks confirmed
+[00:03] INITIATING MULTI-SOURCE SCAN...
+[00:04] ► Querying Metropolitan Museum database...
+[00:07] ► Retrieved 18 high-resolution artworks
+[00:08] ► Querying Art Institute of Chicago...
+[00:11] ► Retrieved 12 additional artworks
+[00:12] ► CORPUS COMPLETE: 30/30 artworks secured
+[00:13] ═══════════════════════════════════════
+[00:14] FRAMEWORK 01: DNA ARTISTIQUE - INITIATING
+[00:15] ► Analyzing artwork 1/30...
+[00:16] ► Analyzing artwork 2/30...
+...
+[01:23] ► FRAMEWORK 01: COMPLETE [30/30]
+[01:24] FRAMEWORK 02: COMPOSITION - INITIATING
+...
+[05:45] ═══════════════════════════════════════
+[05:46] ALL FRAMEWORKS COMPLETE
+[05:47] GENERATING ANALYSIS PACKAGE...
+[05:49] ► Creating archive: [filename].zip
+[05:50] ✓ MISSION ACCOMPLISHED
+[05:50] PACKAGE READY FOR EXTRACTION
+```
+
+**Animations des barres de progression :**
+- Mise à jour en temps réel pour chaque œuvre analysée
+- Affichage du ratio : [XX/30]
+- Barre visuelle qui se remplit progressivement
+- Changement de couleur quand complétée (vert plus brillant)
+
+---
+
+### 7. Stack Technique Recommandée
+
+**Frontend :**
+- React ou Vue.js pour l'interface
+- CSS personnalisé pour le style terminal/militaire
+- Animations CSS pour les effets néon et chargement
+
+**Backend :**
+- Node.js + Express pour l'API
+- Fetch API pour interroger les musées
+- Intégration API vision (OpenAI, Claude, ou alternative)
+- JSZip pour créer le fichier ZIP
+- File-saver pour le téléchargement
+
+**Bibliothèques utiles :**
+- Axios pour les requêtes HTTP
+- JSZip pour la compression
+- Sharp ou Canvas pour le traitement d'image si nécessaire
+
+---
+
+### 8. Contraintes et Optimisations
+
+**Performance :**
+- Analyser les œuvres en parallèle (par batch de 5-10)
+- Cache des résultats si le même artiste est recherché
+- Timeout de 30 secondes par requête API
+- Retry logic pour les échecs réseau
+
+**Gestion des erreurs :**
+- Si moins de 30 œuvres trouvées : message d'alerte mais continuer
+- Si aucune œuvre trouvée : message d'erreur clair
+- Si API vision échoue : retry avec message d'erreur dans le log
+- Validation du nom d'artiste (au moins 2 caractères)
+
+**Sécurité :**
+- Rate limiting pour éviter l'abus
+- Sanitization des inputs utilisateur
+- Pas de stockage des données utilisateur
+- Session expiration après 1h d'inactivité
+
+---
+
+### 9. Détails d'Implémentation
+
+**Format de saisie des 30 œuvres :**
+```
+Starry Night (1889)
+Sunflowers (1888)
+The Potato Eaters (1885)
+Wheatfield with Crows (1890)
+The Bedroom (1888)
+...
+```
+
+**Parsing des œuvres :**
+- Séparer par ligne
+- Extraire titre et année avec regex
+- Valider que chaque ligne contient au moins un titre
+
+**Matching des œuvres avec les APIs :**
+- Utiliser le titre pour rechercher dans les bases
+- Fuzzy matching tolérant les variations orthographiques
+- Prioriser les correspondances exactes
+
+---
+
+### 10. Checklist de Fonctionnalités
+
+- [ ] Interface UI terminal noir/vert avec 2 panneaux
+- [ ] Champ input nom d'artiste
+- [ ] Zone de saisie des 30 œuvres avec compteur
+- [ ] 6 barres de progression pour les frameworks
+- [ ] System log avec messages temps réel
+- [ ] Intégration Met Museum API
+- [ ] Intégration Art Institute of Chicago API
+- [ ] Intégration Cleveland Museum API
+- [ ] Analyse IA pour Framework 1 (ADN Artistique)
+- [ ] Analyse IA pour Framework 2 (Composition)
+- [ ] Analyse IA pour Framework 3 (Lumière)
+- [ ] Analyse IA pour Framework 4 (Couleurs)
+- [ ] Analyse IA pour Framework 5 (Finitions)
+- [ ] Analyse IA pour Framework 6 (Iconographie)
+- [ ] Génération des 6 fichiers .txt formatés
+- [ ] Création du fichier README.txt
+- [ ] Compression en ZIP
+- [ ] Bouton de téléchargement du ZIP
+- [ ] Gestion complète des erreurs
+- [ ] Messages de feedback utilisateur
+- [ ] Design responsive (desktop prioritaire)
+
+---
+
+## 🚀 INSTRUCTIONS FINALES POUR REPLIT AI
+
+Crée cette application en respectant STRICTEMENT :
+1. Le design terminal militaire noir/vert
+2. Les 3 APIs muséales gratuites sans authentification
+3. Les 6 frameworks d'analyse avec leurs formats spécifiques
+4. La structure exacte des fichiers output
+5. Le système de feedback en temps réel
+6. La génération du ZIP final avec tous les fichiers
+
+L'application doit être fonctionnelle, professionnelle et donner une impression de "protocole militaire d'analyse artistique de haute technologie".
+
+**STYLE VISUEL OBLIGATOIRE :**
+- Fond noir total (#000000)
+- Texte vert Matrix (#00FF41)
+- Police monospace type Courier ou Consolas
+- Bordures vertes avec coins ASCII
+- Pas d'éléments arrondis, tout en angles droits
+- Animations de type "scanning" ou "loading"
+
+Bonne chance, soldat. 🎖️
