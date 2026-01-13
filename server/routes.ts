@@ -93,17 +93,20 @@ export async function registerRoutes(
     const artworksFolder = folder?.folder("ARTWORKS_CORPUS");
     if (artworksFolder) {
       const axios = (await import("axios")).default;
-      for (let i = 0; i < artworks.length; i++) {
-        const art = artworks[i];
+      const downloadPromises = artworks.map(async (art, i) => {
         try {
-          const response = await axios.get(art.imageUrl, { responseType: 'arraybuffer' });
+          const response = await axios.get(art.imageUrl, { 
+            responseType: 'arraybuffer',
+            timeout: 10000 
+          });
           const extension = art.imageUrl.split('.').pop()?.split('?')[0] || 'jpg';
           const filename = `${(i + 1).toString().padStart(2, '0')}_${art.title.replace(/[^a-z0-9]/gi, '_').substring(0, 50)}.${extension}`;
           artworksFolder.file(filename, response.data);
         } catch (error) {
           console.error(`Failed to download image for artwork ${art.id}:`, error);
         }
-      }
+      });
+      await Promise.all(downloadPromises);
     }
 
     if (folder) {
