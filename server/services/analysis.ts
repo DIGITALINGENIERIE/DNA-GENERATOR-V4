@@ -10,24 +10,10 @@ const openai = new OpenAI({
 
 export async function performAnalysis(analysisId: number, artistName: string) {
   const artworks = await storage.getArtworksByAnalysisId(analysisId);
-  const totalFrameworks = FRAMEWORK_TYPES.length;
-  let frameworksCompleted = 0;
-
-  for (const framework of FRAMEWORK_TYPES) {
-    // Update log
-    await storage.updateAnalysisStatus(
-      analysisId, 
-      "analyzing", 
-      Math.floor((frameworksCompleted / totalFrameworks) * 100),
-      `Running ${framework.toUpperCase()} PROTOCOL...`
-    );
-
-    // Mock individual analysis for speed (real vision API on 30 images * 6 frameworks is too slow/expensive for this demo)
-    // In a real production app, we would queue these jobs.
-    // Here we will generate the SYNTHESIS directly using the artwork titles/years as context for the LLM.
-    
-    const context = artworks.map(a => `- ${a.title} (${a.year})`).join("\n");
-    
+  const context = artworks.map(a => `- ${a.title} (${a.year})`).join("\n");
+  
+  // We process frameworks in parallel to reach "maximum power"
+  await Promise.all(FRAMEWORK_TYPES.map(async (framework) => {
     try {
       const completion = await openai.chat.completions.create({
         model: "gpt-5.1",
@@ -62,6 +48,16 @@ export async function performAnalysis(analysisId: number, artistName: string) {
         status: "completed"
       });
 
+      // Update progress in storage (simplified)
+      const currentResults = await storage.getFrameworkResultsByAnalysisId(analysisId);
+      const progress = Math.floor((currentResults.length / FRAMEWORK_TYPES.length) * 100);
+      await storage.updateAnalysisStatus(
+        analysisId, 
+        progress === 100 ? "completed" : "analyzing", 
+        progress,
+        `Protocol ${framework.toUpperCase()} successfully extracted.`
+      );
+
     } catch (error) {
       console.error(`Error in framework ${framework}:`, error);
       await storage.createFrameworkResult({
@@ -71,7 +67,5 @@ export async function performAnalysis(analysisId: number, artistName: string) {
         status: "failed"
       });
     }
-
-    frameworksCompleted++;
-  }
+  }));
 }

@@ -151,7 +151,10 @@ export default function Home() {
                   <span>SYSTEM LOG</span>
                   <span>LIVE STREAM</span>
                 </div>
-                <div className="bg-black/50 border border-[#003300] p-4 flex-1 text-[11px] text-[#003300] overflow-y-auto font-mono scrollbar-thin">
+                <div className="bg-black/50 border border-[#003300] p-4 flex-1 text-[11px] text-[#00FF41] overflow-y-auto font-mono scrollbar-thin">
+                  <div className="text-[#008F11] mb-2">[INIT] CORE SYSTEM READY...</div>
+                  <div className="text-[#008F11] mb-2">[MEM] 128GB NEURAL BUFFER ALLOCATED</div>
+                  <div className="text-[#008F11] mb-2">[NET] TUNNEL ESTABLISHED TO MUSEUM CLOUD</div>
                   <div className="animate-pulse">Waiting for mission initialization...</div>
                 </div>
               </div>
