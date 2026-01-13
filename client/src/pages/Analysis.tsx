@@ -87,174 +87,180 @@ export default function Analysis() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-[#00FF41] font-mono p-4 md:p-6 lg:p-8 overflow-hidden relative">
+    <div className="min-h-screen bg-black text-[#00FF41] font-mono p-8 overflow-hidden relative flex flex-col">
       <div className="scanlines" />
       <div className="crt-flicker" />
+      <MatrixRain />
 
-      {/* Top Bar */}
-      <header className="flex justify-between items-center mb-6 border-b border-[#003300] pb-4">
-        <div className="flex flex-col">
-          <h1 className="text-xl font-bold tracking-widest text-glow">
-            TARGET: {analysis.artistName}
-          </h1>
-          <div className="text-xs text-[#008F11] flex gap-4 mt-1">
-            <span>ID: {analysis.id.toString().padStart(6, '0')}</span>
-            <span>STATUS: <span className="animate-pulse">{analysis.status.toUpperCase()}</span></span>
+      {/* Global Application Frame */}
+      <div className="flex-1 border-2 border-[#00FF41] bg-black/40 backdrop-blur-sm relative flex flex-col p-1">
+        {/* Top Header Frame Bar */}
+        <div className="border border-[#00FF41] p-4 mb-4 flex justify-between items-center bg-[#001100]">
+          <div className="flex items-center gap-6">
+            <h1 className="text-3xl font-black tracking-[0.3em] text-glow">
+              DNA.GENERATOR_V4
+            </h1>
+            <div className="hidden md:block text-[10px] text-[#008F11] tracking-widest uppercase">
+              MILITARY GRADE ART ANALYSIS PROTOCOL
+            </div>
+          </div>
+          <div className="flex gap-8 text-[10px] font-bold">
+            <div className="flex flex-col items-end">
+              <span className="text-[#008F11]">SYS_STATUS:</span>
+              <span className="animate-pulse">ONLINE</span>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className="text-[#008F11]">SECURE_CONN:</span>
+              <span>ENCRYPTED</span>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className="text-[#008F11]">VER:</span>
+              <span>4.0.2</span>
+            </div>
           </div>
         </div>
-        <div className="text-right hidden md:block">
-          <div className="text-xs text-[#003300]">SYSTEM UPTIME</div>
-          <div className="font-mono text-[#00FF41]">{new Date().toISOString().split('T')[0]}</div>
-        </div>
-      </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-140px)]">
-        
-        {/* LEFT PANEL: DATA STREAM (Artworks) */}
-        <section className="lg:col-span-4 flex flex-col gap-4 h-full">
-          <div className="ascii-border h-full flex flex-col bg-[#000500] border border-[#003300] p-1">
-            <div className="bg-[#001100] px-3 py-2 border-b border-[#003300] flex justify-between items-center">
-              <span className="text-xs font-bold tracking-widest">INPUT_STREAM</span>
-              <span className="text-xs text-[#008F11]">{artworks.length}/30</span>
+        <div className="flex-1 grid md:grid-cols-2 gap-6 p-4 overflow-hidden">
+          {/* LEFT PANEL: DATA STREAM (Artworks) */}
+          <div className="border border-[#00FF41] bg-black/60 p-1 flex flex-col overflow-hidden">
+            <div className="bg-[#001100] border border-[#003300] p-6 flex-1 flex flex-col overflow-hidden">
+              <div className="flex items-center gap-3 mb-6 border-b border-[#003300] pb-4">
+                <div className="w-2 h-2 rounded-full bg-[#00FF41] animate-pulse" />
+                <h2 className="text-sm font-bold tracking-[0.2em] text-glow uppercase">
+                  INPUT_STREAM ({artworks.length}/30)
+                </h2>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-2">
+                <AnimatePresence>
+                  {artworks.map((art, i) => (
+                    <motion.div
+                      key={art.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className={`flex gap-3 p-3 border border-[#003300] ${art.isAnalyzed ? 'bg-[#001100]' : 'bg-black'} hover:border-[#00FF41] transition-colors group`}
+                    >
+                      <div className="w-16 h-16 bg-[#002200] border border-[#003300] relative overflow-hidden flex-shrink-0">
+                        {art.imageUrl ? (
+                          <img 
+                            src={art.imageUrl} 
+                            alt={art.title}
+                            className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
+                          />
+                        ) : (
+                          <ImageIcon className="w-8 h-8 text-[#003300] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                        )}
+                        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-[#00FF41]/20 to-transparent h-1 animate-scanline" />
+                      </div>
+                      <div className="flex-1 min-w-0 flex flex-col justify-center">
+                        <div className="text-sm font-bold truncate text-[#00CC33]">{art.title}</div>
+                        <div className="text-[11px] text-[#006600] truncate flex justify-between mt-1">
+                          <span>{art.year || "UNKNOWN"}</span>
+                          <span>{art.museumSource}</span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <div className={`w-2 h-2 rounded-full ${art.isAnalyzed ? 'bg-[#00FF41] shadow-[0_0_5px_#00FF41]' : 'bg-[#003300]'}`} />
+                          <span className="text-[10px] text-[#008F11] tracking-tighter">
+                            {art.isAnalyzed ? "ANALYZED" : "QUEUED"}
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                  
+                  {artworks.length === 0 && (
+                    <div className="h-full flex flex-col items-center justify-center text-[#003300] opacity-50 py-12">
+                      <Loader2 className="w-12 h-12 animate-spin mb-4" />
+                      <span className="text-sm tracking-widest">AWAITING DATA STREAM...</span>
+                    </div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
-            
-            <div className="flex-1 overflow-y-auto p-2 space-y-2 custom-scrollbar">
-              <AnimatePresence>
-                {artworks.map((art, i) => (
-                  <motion.div
-                    key={art.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className={`flex gap-3 p-2 border border-[#003300] ${art.isAnalyzed ? 'bg-[#001100]' : 'bg-black'} hover:border-[#00FF41] transition-colors group`}
-                  >
-                    <div className="w-12 h-12 bg-[#002200] border border-[#003300] relative overflow-hidden flex-shrink-0">
-                      {art.imageUrl ? (
-                        <img 
-                          src={art.imageUrl} 
-                          alt={art.title}
-                          className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
-                        />
-                      ) : (
-                        <ImageIcon className="w-6 h-6 text-[#003300] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                      )}
-                      {/* Scanline over image */}
-                      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-[#00FF41]/20 to-transparent h-1 animate-scanline" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs font-bold truncate text-[#00CC33]">{art.title}</div>
-                      <div className="text-[10px] text-[#006600] truncate flex justify-between">
-                        <span>{art.year || "UNKNOWN"}</span>
-                        <span>{art.museumSource}</span>
-                      </div>
-                      <div className="flex items-center gap-1 mt-1">
-                        <div className={`w-1.5 h-1.5 rounded-full ${art.isAnalyzed ? 'bg-[#00FF41] shadow-[0_0_5px_#00FF41]' : 'bg-[#003300]'}`} />
-                        <span className="text-[10px] text-[#008F11] tracking-tighter">
-                          {art.isAnalyzed ? "ANALYZED" : "QUEUED"}
-                        </span>
-                      </div>
-                    </div>
-                  </motion.div>
+          </div>
+
+          {/* RIGHT PANEL: SYSTEM METRICS & LOGS */}
+          <div className="border border-[#00FF41] bg-black/60 p-1 flex flex-col overflow-hidden">
+            <div className="bg-[#001100] border border-[#003300] p-6 flex-1 flex flex-col overflow-hidden">
+              <div className="flex items-center gap-3 mb-6 border-b border-[#003300] pb-4">
+                <div className="w-2 h-2 rounded-full bg-[#00FF41] animate-pulse" />
+                <h2 className="text-sm font-bold tracking-[0.2em] text-glow uppercase">
+                  SYSTEM_METRICS
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6 mb-8">
+                {[
+                  { label: "DNA ARTISTIQUE", key: "artistic" },
+                  { label: "COMPOSITION", key: "composition" },
+                  { label: "LUMIÈRE", key: "light" },
+                  { label: "COULEURS", key: "color" },
+                  { label: "FINITIONS", key: "finish" },
+                  { label: "ICONOGRAPHIE", key: "iconography" }
+                ].map((item, i) => (
+                  <TerminalProgressBar 
+                    key={item.key}
+                    label={`${i + 1}. ${item.label}`} 
+                    progress={getFrameworkProgress(item.key)} 
+                  />
                 ))}
-                
-                {artworks.length === 0 && (
-                  <div className="h-full flex flex-col items-center justify-center text-[#003300] opacity-50">
-                    <Loader2 className="w-8 h-8 animate-spin mb-2" />
-                    <span className="text-xs tracking-widest">AWAITING DATA STREAM...</span>
+              </div>
+
+              <div className="flex-1 flex flex-col border-t border-[#003300] pt-4 overflow-hidden">
+                <div className="flex justify-between text-[10px] text-[#008F11] mb-2 uppercase font-bold tracking-widest">
+                  <span>SYSTEM LOG // LIVE STREAM</span>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                    <span>REC</span>
                   </div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        </section>
-
-        {/* RIGHT PANEL: SYSTEM METRICS */}
-        <section className="lg:col-span-8 flex flex-col gap-6 h-full">
-          
-          {/* Progress Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#000500] border border-[#003300] p-6 ascii-border">
-            <div className="col-span-full mb-2 flex items-center gap-2 border-b border-[#003300] pb-2">
-              <Activity className="w-4 h-4" />
-              <span className="text-xs font-bold tracking-widest">ANALYSIS_METRICS</span>
-            </div>
-
-            <TerminalProgressBar 
-              label="ARTISTIC DNA" 
-              progress={getFrameworkProgress("artistic")} 
-            />
-            <TerminalProgressBar 
-              label="COMPOSITION" 
-              progress={getFrameworkProgress("composition")} 
-            />
-            <TerminalProgressBar 
-              label="LIGHT & SHADOW" 
-              progress={getFrameworkProgress("light")} 
-            />
-            <TerminalProgressBar 
-              label="COLOR THEORY" 
-              progress={getFrameworkProgress("color")} 
-            />
-            <TerminalProgressBar 
-              label="SURFACE FINISH" 
-              progress={getFrameworkProgress("finish")} 
-            />
-            <TerminalProgressBar 
-              label="ICONOGRAPHY" 
-              progress={getFrameworkProgress("iconography")} 
-            />
-          </div>
-
-          {/* System Log */}
-          <div className="flex-1 bg-black border border-[#003300] p-4 font-mono text-xs overflow-hidden flex flex-col relative ascii-border">
-            <div className="absolute top-0 right-0 p-2 text-[10px] text-[#003300]">SYS.LOG</div>
-            <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar pr-2">
-              {(analysis.logs || []).map((log, i) => (
-                <LogEntry key={i} text={log} />
-              ))}
-              <div ref={logsEndRef} />
-              
-              {!isComplete && !isFailed && (
-                <div className="flex gap-2 mt-2 opacity-50">
-                  <span className="text-[#008F11]">{">"}</span>
-                  <span className="w-2 h-4 bg-[#00FF41] animate-pulse" />
                 </div>
-              )}
+                <div className="bg-black/50 border border-[#003300] p-4 flex-1 text-[11px] text-[#00FF41] overflow-y-auto font-mono scrollbar-thin">
+                  {(analysis.logs || []).map((log, i) => (
+                    <LogEntry key={i} text={log} />
+                  ))}
+                  <div ref={logsEndRef} />
+                  {!isComplete && !isFailed && (
+                    <div className="flex gap-2 mt-2">
+                      <span className="text-[#008F11] animate-pulse">{">"}</span>
+                      <span className="w-2 h-4 bg-[#00FF41] animate-pulse" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Action Area */}
+              <div className="mt-6 flex items-center justify-between border-t border-[#003300] pt-4">
+                <div className="text-[11px] text-[#008F11] font-bold tracking-widest">
+                  {isComplete ? "SEQUENCE COMPLETE. PACKAGE READY." : isFailed ? "MISSION FAILED. ABORT." : "EXTRACTING DNA..."}
+                </div>
+                
+                <AnimatePresence>
+                  {isComplete && (
+                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+                      <TerminalButton onClick={handleDownload} className="flex items-center gap-2">
+                        <Download className="w-4 h-4" />
+                        DOWNLOAD
+                      </TerminalButton>
+                    </motion.div>
+                  )}
+                  {isFailed && (
+                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+                       <TerminalButton variant="danger" onClick={() => window.location.href = "/"}>
+                        RESTART
+                      </TerminalButton>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Action Area */}
-          <div className="h-16 flex items-center justify-between">
-            <div className="text-xs text-[#003300]">
-              {isComplete ? "SEQUENCE COMPLETE. READY FOR EXPORT." : "PROCESSING SEQUENCE..."}
-            </div>
-            
-            <AnimatePresence>
-              {isComplete && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                >
-                  <TerminalButton onClick={handleDownload} className="flex items-center gap-2">
-                    <Download className="w-4 h-4" />
-                    DOWNLOAD PACKAGE
-                  </TerminalButton>
-                </motion.div>
-              )}
-              
-              {isFailed && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                >
-                   <TerminalButton variant="danger" onClick={() => window.location.reload()}>
-                    RETRY SEQUENCE
-                  </TerminalButton>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-        </section>
+        {/* Footer Frame Bar */}
+        <div className="border-t border-[#00FF41] p-2 text-center text-[#003300] text-[8px] tracking-[0.5em] uppercase">
+          RESTRICTED ACCESS // AUTHORIZED PERSONNEL ONLY // SESSION ID: IHL18
+        </div>
       </div>
     </div>
   );
