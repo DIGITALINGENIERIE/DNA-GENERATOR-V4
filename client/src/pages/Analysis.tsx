@@ -228,11 +228,20 @@ export default function Analysis() {
                   const status = frameworkResult?.status || (analysis.status === "completed" ? "completed" : "pending");
                   const progress = getFrameworkProgress(item.key);
                   
+                  // Calculate count based on progress for visual flair [XX/30]
+                  const currentCount = Math.round((progress / 100) * 30);
+                  const countText = `[${currentCount.toString().padStart(2, '0')}/30]`;
+                  
                   return (
                     <div key={item.key} className="flex flex-col gap-1">
+                      <div className="flex justify-between items-end mb-1 text-[10px] font-bold tracking-wider">
+                        <span className="text-[#00FF41] uppercase">{i + 1}. {item.label}</span>
+                        <span className="text-[#008F11] font-mono">{countText}</span>
+                      </div>
                       <TerminalProgressBar 
-                        label={`${i + 1}. ${item.label}`} 
+                        label="" // Label handled above
                         progress={progress} 
+                        showValue={false}
                       />
                       <div className="flex justify-between text-[9px] px-1 uppercase tracking-tighter">
                         <span className={status === "completed" ? "text-[#00FF41]" : status === "failed" ? "text-red-500" : "text-[#008F11]"}>
